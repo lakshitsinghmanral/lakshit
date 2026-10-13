@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kinjal Budget Online Shopping Mall</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <div class="bg-brand-600 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium">
+        🎉 Welcome to Kinjal Budget Online Shopping Mall! Flat 50% OFF on all Clothing & Toys. Use Code: <span class="underline font-bold">KINJAL50</span>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="filterCategory('all')">
+                    <div class="w-10 h-10 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                        K
+                    </div>
+                    <div>
+                        <span class="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">Kinjal Mall</span>
+                        <p class="text-xs text-brand-600 font-semibold uppercase tracking-wider">Budget Shopping</p>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="hidden md:flex flex-1 max-w-lg mx-8 relative">
+                    <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search pants, shirts, toys, jackets..." 
+                           class="w-full bg-gray-100 text-sm rounded-full pl-11 pr-4 py-3 border border-transparent focus:bg-white focus:border-brand-500 focus:outline-none transition shadow-inner">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                </div>
+
+                <!-- Nav Icons & Actions -->
+                <div class="flex items-center space-x-5">
+                    <button onclick="toggleWishlist()" class="relative p-2 text-gray-600 hover:text-brand-600 transition">
+                        <i class="fa-regular fa-heart text-2xl"></i>
+                        <span id="wishlistCount" class="absolute top-0 right-0 bg-brand-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">0</span>
+                    </button>
+                    <button onclick="toggleCart()" class="relative p-2 text-gray-600 hover:text-brand-600 transition">
+                        <i class="fa-solid fa-cart-shopping text-2xl"></i>
+                        <span id="cartCount" class="absolute top-0 right-0 bg-brand-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">0</span>
+                    </button>
+                    <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-gray-600 hover:text-brand-600">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Navbar Links -->
+            <nav class="hidden md:flex space-x-8 border-t border-gray-100 py-3 text-sm font-semibold overflow-x-auto">
+                <button onclick="filterCategory('all')" class="category-btn text-brand-600 pb-1 border-b-2 border-brand-600 whitespace-nowrap transition">All Products</button>
+                <button onclick="filterCategory('clothing')" class="category-btn text-gray-600 hover:text-brand-600 pb-1 border-b-2 border-transparent whitespace-nowrap transition">Clothing</button>
+                <button onclick="filterCategory('pants')" class="category-btn text-gray-600 hover:text-brand-600 pb-1 border-b-2 border-transparent whitespace-nowrap transition">Pants & Denims</button>
+                <button onclick="filterCategory('shirts')" class="category-btn text-gray-600 hover:text-brand-600 pb-1 border-b-2 border-transparent whitespace-nowrap transition">Shirts & Tops</button>
+                <button onclick="filterCategory('jackets')" class="category-btn text-gray-600 hover:text-brand-600 pb-1 border-b-2 border-transparent whitespace-nowrap transition">Jackets & Hoodies</button>
+                <button onclick="filterCategory('toys')" class="category-btn text-gray-600 hover:text-brand-600 pb-1 border-b-2 border-transparent whitespace-nowrap transition">Toys & Kids</button>
+                <button onclick="filterCategory('accessories')" class="category-btn text-gray-600 hover:text-brand-600 pb-1 border-b-2 border-transparent whitespace-nowrap transition">Accessories</button>
+            </nav>
+        </div>
+
+        <!-- Mobile Search & Menu -->
+        <div id="mobileMenu" class="hidden md:hidden px-4 pt-2 pb-4 border-t border-gray-200 bg-white space-y-3">
+            <div class="relative">
+                <input type="text" id="mobileSearchInput" oninput="handleMobileSearch()" placeholder="Search pants, toys..." 
+                       class="w-full bg-gray-100 text-sm rounded-full pl-10 pr-4 py-2 border focus:outline-none focus:border-brand-500">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+            </div>
+            <div class="flex flex-col space-y-2 text-sm font-medium">
+                <button onclick="filterCategory('all'); toggleMobileMenu();" class="text-left py-1 text-brand-600">All Products</button>
+                <button onclick="filterCategory('clothing'); toggleMobileMenu();" class="text-left py-1 text-gray-700">Clothing</button>
+                <button onclick="filterCategory('pants'); toggleMobileMenu();" class="text-left py-1 text-gray-700">Pants & Denims</button>
+                <button onclick="filterCategory('shirts'); toggleMobileMenu();" class="text-left py-1 text-gray-700">Shirts & Tops</button>
+                <button onclick="filterCategory('jackets'); toggleMobileMenu();" class="text-left py-1 text-gray-700">Jackets & Hoodies</button>
+                <button onclick="filterCategory('toys'); toggleMobileMenu();" class="text-left py-1 text-gray-700">Toys & Kids</button>
+                <button onclick="filterCategory('accessories'); toggleMobileMenu();" class="text-left py-1 text-gray-700">Accessories</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="bg-gradient-to-r from-pink-500 via-brand-600 to-purple-600 text-white py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
+            <div class="max-w-xl text-center md:text-left mb-8 md:mb-0">
+                <span class="bg-white/25 text-white text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Kinjal Budget Mall Special</span>
+                <h1 class="text-3xl sm:text-5xl font-extrabold mt-3 mb-4 leading-tight">Trendy Fashion & Toys at Unbeatable Prices</h1>
+                <p class="text-pink-100 text-base sm:text-lg mb-6">Explore 30+ budget collections. Try searching "pants" or "toys" instantly!</p>
+                <div class="flex flex-wrap justify-center md:justify-start gap-4">
+                    <button onclick="filterCategory('pants')" class="bg-white text-brand-700 font-bold px-6 py-3 rounded-full shadow-lg hover:bg-pink-50 transition">Shop Pants</button>
+                    <button onclick="filterCategory('toys')" class="bg-brand-700 border-2 border-white text-white font-bold px-6 py-3 rounded-full shadow-lg hover:bg-brand-800 transition">Shop Toys</button>
+                </div>
+            </div>
+            <div class="w-full md:w-auto flex justify-center">
+                <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=500&q=80" alt="Mall Banner" class="rounded-2xl shadow-2xl max-h-72 object-cover border-4 border-white/20">
+            </div>
+        </div>
+    </section>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="flex justify-between items-center mb-6">
+            <h2 id="sectionTitle" class="text-2xl font-bold text-gray-900">All Products (30 Items)</h2>
+            <div class="flex items-center space-x-2 text-sm text-gray-500">
+                <span>Sort by:</span>
+                <select id="sortSelect" onchange="sortProducts()" class="bg-white border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:border-brand-500">
+                    <option value="default">Featured</option>
+                    <option value="low-high">Price: Low to High</option>
+                    <option value="high-low">Price: High to Low</option>
+                    <option value="rating">Top Rated</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+
+        <div id="noResults" class="hidden text-center py-20">
+            <i class="fa-solid fa-box-open text-6xl text-gray-300 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-700">No products found</h3>
+            <p class="text-gray-500 mt-2">Try searching for something else like "pants", "shirt", or "toys".</p>
+            <button onclick="filterCategory('all'); document.getElementById('searchInput').value='';" class="mt-4 bg-brand-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-brand-700 transition">Reset Search</button>
+        </div>
+    </main>
+
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/50 transition-opacity" onclick="toggleCart()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-xl flex flex-col">
+                <div class="flex items-center justify-between px-6 py-4 bg-brand-600 text-white">
+                    <h2 class="text-lg font-bold flex items-center gap-2"><i class="fa-solid fa-cart-shopping"></i> Shopping Cart (<span id="cartItemCount">0</span>)</h2>
+                    <button onclick="toggleCart()" class="text-white hover:text-gray-200 text-xl font-bold">&times;</button>
+                </div>
+                <div id="cartItemsList" class="flex-1 overflow-y-auto p-6 space-y-4 divide-y divide-gray-100"></div>
+                <div class="border-t border-gray-200 p-6 bg-gray-50">
+                    <div class="flex justify-between text-base font-medium text-gray-900 mb-2">
+                        <p>Subtotal</p>
+                        <p id="cartSubtotal">₹0</p>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-4">Shipping & taxes calculated at checkout.</p>
+                    <button onclick="checkout()" class="w-full bg-brand-600 border border-transparent rounded-lg py-3 px-4 text-base font-medium text-white shadow-sm hover:bg-brand-700 transition">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="wishlistModal" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/50 transition-opacity" onclick="toggleWishlist()"></div>
+        <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-xl flex flex-col">
+                <div class="flex items-center justify-between px-6 py-4 bg-gray-900 text-white">
+                    <h2 class="text-lg font-bold flex items-center gap-2"><i class="fa-solid fa-heart text-brand-500"></i> My Wishlist (<span id="wishlistModalCount">0</span>)</h2>
+                    <button onclick="toggleWishlist()" class="text-white hover:text-gray-200 text-xl font-bold">&times;</button>
+                </div>
+                <div id="wishlistItemsList" class="flex-1 overflow-y-auto p-6 space-y-4 divide-y divide-gray-100"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-900 text-gray-300 pt-12 pb-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-white font-bold">K</div>
+                    <span class="text-xl font-bold text-white">Kinjal Mall</span>
+                </div>
+                <p class="text-sm text-gray-400">Your trusted budget online shopping mall for clothing, pants, shirts, toys, and accessories.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Quick Links</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><button onclick="filterCategory('all')" class="hover:text-white transition">All Products</button></li>
+                    <li><button onclick="filterCategory('pants')" class="hover:text-white transition">Pants & Denims</button></li>
+                    <li><button onclick="filterCategory('toys')" class="hover:text-white transition">Toys & Kids</button></li>
+                    <li><button onclick="filterCategory('jackets')" class="hover:text-white transition">Jackets & Hoodies</button></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Customer Care</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-white transition">Track Order</a></li>
+                    <li><a href="#" class="hover:text-white transition">Returns & Exchanges</a></li>
+                    <li><a href="#" class="hover:text-white transition">Shipping Policy</a></li>
+                    <li><a href="#" class="hover:text-white transition">Contact Kinjal Support</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Newsletter</h4>
+                <p class="text-sm text-gray-400 mb-3">Subscribe for latest budget deals and discount coupons.</p>
+                <div class="flex">
+                    <input type="email" placeholder="Your email" class="bg-gray-800 text-sm px-4 py-2 rounded-l-lg focus:outline-none w-full text-white">
+                    <button onclick="showNotification('Subscribed successfully! Welcome to Kinjal Mall.')" class="bg-brand-600 px-4 py-2 rounded-r-lg text-white font-semibold hover:bg-brand-700 transition">Join</button>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 max-w-7xl mx-auto px-4 pt-6 text-center text-xs text-gray-500">
+            &copy; 2026 Kinjal Budget Online Shopping Mall. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        const products = [
+            { id: 1, name: "Classic Slim Fit Denim Jeans", category: "pants", price: 799, oldPrice: 1599, rating: 4.5, image: "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=500&q=80", tag: "Best Seller" },
+            { id: 2, name: "Casual Stretch Cotton Chinos", category: "pants", price: 699, oldPrice: 1399, rating: 4.4, image: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=500&q=80", tag: "Sale" },
+            { id: 3, name: "Urban Utility Cargo Pants", category: "pants", price: 899, oldPrice: 1799, rating: 4.7, image: "https://images.unsplash.com/photo-1517445312882-bc9910d016b7?auto=format&fit=crop&w=500&q=80", tag: "Trending" },
+            { id: 4, name: "Athletic Comfort Jogger Pants", category: "pants", price: 599, oldPrice: 1199, rating: 4.6, image: "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?auto=format&fit=crop&w=500&q=80", tag: "Popular" },
+            { id: 5, name: "Formal Office Trousers", category: "pants", price: 849, oldPrice: 1699, rating: 4.3, image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=500&q=80", tag: "Formal" },
+            { id: 6, name: "Relaxed Fit Cargo Joggers", category: "pants", price: 749, oldPrice: 1499, rating: 4.5, image: "https://images.unsplash.com/photo-1509551388413-e18d0acdec45?auto=format&fit=crop&w=500&q=80", tag: "New" },
+            { id: 7, name: "Casual Checkered Cotton Shirt", category: "shirts", price: 499, oldPrice: 999, rating: 4.4, image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=500&q=80", tag: "Best Seller" },
+            { id: 8, name: "Solid Oxford Formal Shirt", category: "shirts", price: 599, oldPrice: 1199, rating: 4.6, image: "https://images.unsplash.com/photo-1621072156002-e2fccdc0b176?auto=format&fit=crop&w=500&q=80", tag: "Office" },
+            { id: 9, name: "Graphic Printed Summer T-Shirt", category: "shirts", price: 349, oldPrice: 699, rating: 4.2, image: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=500&q=80", tag: "Sale" },
+            { id: 10, name: "Oversized Streetwear Tee", category: "shirts", price: 399, oldPrice: 799, rating: 4.5, image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=500&q=80", tag: "Trending" },
+            { id: 11, name: "Striped Linen Casual Shirt", category: "shirts", price: 649, oldPrice: 1299, rating: 4.3, image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=500&q=80", tag: "Summer" },
+            { id: 12, name: "Polo Neck Cotton T-Shirt", category: "shirts", price: 449, oldPrice: 899, rating: 4.4, image: "https://images.unsplash.com/photo-1625910513411-ed90226c6d26?auto=format&fit=crop&w=500&q=80", tag: "Classic" },
+            { id: 13, name: "Fleece Winter Hoodie", category: "jackets", price: 999, oldPrice: 1999, rating: 4.8, image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=500&q=80", tag: "Winter" },
+            { id: 14, name: "Classic Denim Jacket", category: "jackets", price: 1199, oldPrice: 2399, rating: 4.7, image: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=500&q=80", tag: "Top Rated" },
+            { id: 15, name: "Waterproof Bomber Jacket", category: "jackets", price: 1299, oldPrice: 2599, rating: 4.6, image: "https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=500&q=80", tag: "Popular" },
+            { id: 16, name: "Zip-Up Athletic Track Jacket", category: "jackets", price: 899, oldPrice: 1799, rating: 4.3, image: "https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=500&q=80", tag: "Sale" },
+            { id: 17, name: "Educational Building Blocks Set", category: "toys", price: 499, oldPrice: 999, rating: 4.8, image: "https://images.unsplash.com/photo-1587654780291-39c9404d746b?auto=format&fit=crop&w=500&q=80", tag: "Kids Choice" },
+            { id: 18, name: "Remote Control Racing Car", category: "toys", price: 899, oldPrice: 1799, rating: 4.7, image: "https://images.unsplash.com/photo-1594787318286-3d835c1d207f?auto=format&fit=crop&w=500&q=80", tag: "Best Seller" },
+            { id: 19, name: "Fluffy Teddy Bear Plush Toy", category: "toys", price: 399, oldPrice: 799, rating: 4.9, image: "https://images.unsplash.com/photo-1559454403-b8fb8852101e?auto=format&fit=crop&w=500&q=80", tag: "Cute" },
+            { id: 20, name: "Kids Musical Piano Keyboard", category: "toys", price: 799, oldPrice: 1599, rating: 4.5, image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=500&q=80", tag: "Educational" },
+            { id: 21, name: "Action Superhero Figurine Set", category: "toys", price: 599, oldPrice: 1199, rating: 4.4, image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=500&q=80", tag: "Fun" },
+            { id: 22, name: "Creative Art & Painting Kit", category: "toys", price: 449, oldPrice: 899, rating: 4.6, image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=500&q=80", tag: "Creative" },
+            { id: 23, name: "Minimalist Leather Wallet", category: "accessories", price: 349, oldPrice: 699, rating: 4.5, image: "https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=500&q=80", tag: "Accessory" },
+            { id: 24, name: "Unisex UV Protected Sunglasses", category: "accessories", price: 399, oldPrice: 799, rating: 4.3, image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=500&q=80", tag: "Trending" },
+            { id: 25, name: "Casual Canvas Backpack", category: "accessories", price: 799, oldPrice: 1599, rating: 4.6, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=500&q=80", tag: "Travel" },
+            { id: 26, name: "Smart Fitness Watch Band", category: "accessories", price: 299, oldPrice: 599, rating: 4.2, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=500&q=80", tag: "Gadget" },
+            { id: 27, name: "Women Ethnic Kurti", category: "clothing", price: 599, oldPrice: 1199, rating: 4.7, image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=500&q=80", tag: "Ethnic" },
+            { id: 28, name: "Designer Party Wear Gown", category: "clothing", price: 1499, oldPrice: 2999, rating: 4.8, image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=500&q=80", tag: "Luxury" },
+            { id: 29, name: "Cotton Nightwear Pyjama Set", category: "clothing", price: 499, oldPrice: 999, rating: 4.4, image: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=500&q=80", tag: "Comfort" },
+            { id: 30, name: "Winter Knitted Woolen Scarf", category: "accessories", price: 249, oldPrice: 499, rating: 4.5, image: "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?auto=format&fit=crop&w=500&q=80", tag: "Winter" }
+        ];
+
+        let cart = [];
+        let wishlist = [];
+        let currentCategory = 'all';
+        let currentSearchQuery = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts(products);
+        });
+
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            const noResults = document.getElementById('noResults');
+            const sectionTitle = document.getElementById('sectionTitle');
+            
+            grid.innerHTML = '';
+            sectionTitle.innerText = currentSearchQuery ? `Search Results for "${currentSearchQuery}" (${items.length} Items)` : `Products (${items.length} Items)`;
+
+            if (items.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            items.forEach(product => {
+                const isWishlisted = wishlist.some(item => item.id === product.id);
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition flex flex-col justify-between group relative';
+                card.innerHTML = `
+                    <div class="relative overflow-hidden bg-gray-100 h-64">
+                        <span class="absolute top-3 left-3 bg-brand-600 text-white text-xs font-bold px-2.5 py-1 rounded-full z-10">${product.tag}</span>
+                        <button onclick="toggleWishlistProduct(${product.id})" class="absolute top-3 right-3 bg-white/80 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:text-brand-600 transition z-10 shadow">
+                            <i class="${isWishlisted ? 'fa-solid text-brand-600' : 'fa-regular'} fa-heart"></i>
+                        </button>
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 justify-between">
+                        <div>
+                            <div class="flex items-center justify-between text-xs text-gray-500 mb-1 uppercase font-semibold tracking-wider">
+                                <span>${product.category}</span>
+                                <span class="flex items-center text-amber-500 font-bold"><i class="fa-solid fa-star mr-1"></i>${product.rating}</span>
+                            </div>
+                            <h3 class="font-bold text-gray-900 text-base mb-2 line-clamp-1">${product.name}</h3>
+                            <div class="flex items-center space-x-2 mb-4">
+                                <span class="text-lg font-extrabold text-gray-900">₹${product.price}</span>
+                                <span class="text-sm text-gray-400 line-through">₹${product.oldPrice}</span>
+                                <span class="text-xs text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded">50% OFF</span>
+                            </div>
+                        </div>
+                        <button onclick="addToCart(${product.id})" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 rounded-lg shadow transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(category) {
+            currentCategory = category;
+            currentSearchQuery = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('text-brand-600', 'border-brand-600');
+                btn.classList.add('text-gray-600', 'border-transparent');
+            });
+
+            event && event.target.classList.add('text-brand-600', 'border-brand-600');
+
+            let filtered = category === 'all' ? products : products.filter(p => p.category === category);
+            renderProducts(filtered);
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            currentSearchQuery = query;
+            executeSearch(query);
+        }
+
+        function handleMobileSearch() {
+            const query = document.getElementById('mobileSearchInput').value.toLowerCase().trim();
+            currentSearchQuery = query;
+            executeSearch(query);
+        }
+
+        function executeSearch(query) {
+            if (!query) {
+                renderProducts(currentCategory === 'all' ? products : products.filter(p => p.category === currentCategory));
+                return;
+            }
+            const filtered = products.filter(p => 
+                p.name.toLowerCase().includes(query) || 
+                p.category.toLowerCase().includes(query) || 
+                p.tag.toLowerCase().includes(query)
+            );
+            renderProducts(filtered);
+        }
+
+        function sortProducts() {
+            const sortVal = document.getElementById('sortSelect').value;
+            let currentList = currentSearchQuery ? products.filter(p => p.name.toLowerCase().includes(currentSearchQuery) || p.category.toLowerCase().includes(currentSearchQuery)) : (currentCategory === 'all' ? [...products] : products.filter(p => p.category === currentCategory));
+
+            if (sortVal === 'low-high') {
+                currentList.sort((a, b) => a.price - b.price);
+            } else if (sortVal === 'high-low') {
+                currentList.sort((a, b) => b.price - a.price);
+            } else if (sortVal === 'rating') {
+                currentList.sort((a, b) => b.rating - a.rating);
+            }
+            renderProducts(currentList);
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            const existing = cart.find(item => item.id === productId);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({ ...product, qty: 1 });
+            }
+            updateCartUI();
+            showNotification(`Added "${product.name}" to cart!`);
+        }
+
+        function updateCartUI() {
+            const count = cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartCount').innerText = count;
+            document.getElementById('cartItemCount').innerText = count;
+
+            const list = document.getElementById('cartItemsList');
+            list.innerHTML = '';
+
+            if (cart.length === 0) {
+                list.innerHTML = `<div class="text-center py-10 text-gray-500"><i class="fa-solid fa-cart-shopping text-4xl mb-2 text-gray-300"></i><p>Your cart is empty.</p></div>`;
+                document.getElementById('cartSubtotal').innerText = '₹0';
+                return;
+            }
+
+            let subtotal = 0;
+            cart.forEach(item => {
+                subtotal += item.price * item.qty;
+                const div = document.createElement('div');
+                div.className = 'flex items-center py-4 space-x-4';
+                div.innerHTML = `
+                    <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg border">
+                    <div class="flex-1">
+                        <h4 class="text-sm font-bold text-gray-900">${item.name}</h4>
+                        <p class="text-xs text-gray-500">₹${item.price} x ${item.qty}</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="changeQty(${item.id}, -1)" class="w-6 h-6 bg-gray-200 rounded text-xs font-bold hover:bg-gray-300">-</button>
+                        <span class="text-sm font-semibold">${item.qty}</span>
+                        <button onclick="changeQty(${item.id}, 1)" class="w-6 h-6 bg-gray-200 rounded text-xs font-bold hover:bg-gray-300">+</button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+            document.getElementById('cartSubtotal').innerText = `₹${subtotal}`;
+        }
+
+        function changeQty(productId, delta) {
+            const item = cart.find(i => i.id === productId);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    cart = cart.filter(i => i.id !== productId);
+                }
+            }
+            updateCartUI();
+        }
+
+        function toggleWishlistProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            const index = wishlist.findIndex(item => item.id === productId);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                showNotification(`Removed from wishlist.`);
+            } else {
+                wishlist.push(product);
+                showNotification(`Added to wishlist!`);
+            }
+            updateWishlistUI();
+            renderProducts(currentSearchQuery ? products.filter(p => p.name.toLowerCase().includes(currentSearchQuery)) : (currentCategory === 'all' ? products : products.filter(p => p.category === currentCategory)));
+        }
+
+        function updateWishlistUI() {
+            document.getElementById('wishlistCount').innerText = wishlist.length;
+            document.getElementById('wishlistModalCount').innerText = wishlist.length;
+
+            const list = document.getElementById('wishlistItemsList');
+            list.innerHTML = '';
+
+            if (wishlist.length === 0) {
+                list.innerHTML = `<div class="text-center py-10 text-gray-500"><i class="fa-regular fa-heart text-4xl mb-2 text-gray-300"></i><p>Your wishlist is empty.</p></div>`;
+                return;
+            }
+
+            wishlist.items = wishlist.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between py-4';
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <img src="${item.image}" class="w-14 h-14 object-cover rounded-lg border">
+                        <div>
+                            <h4 class="text-sm font-bold text-gray-900">${item.name}</h4>
+                            <p class="text-xs text-brand-600 font-bold">₹${item.price}</p>
+                        </div>
+                    </div>
+                    <button onclick="addToCart(${item.id}); toggleWishlistProduct(${item.id});" class="bg-brand-600 text-white text-xs px-3 py-1.5 rounded-lg font-semibold hover:bg-brand-700">Move to Cart</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function toggleCart() {
+            document.getElementById('cartDrawer').classList.toggle('hidden');
+        }
+
+        function toggleWishlist() {
+            document.getElementById('wishlistModal').classList.toggle('hidden');
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('Your cart is empty!');
+                return;
+            }
+            showNotification('🎉 Order placed successfully at Kinjal Budget Online Shopping Mall!');
+            cart = [];
+            updateCartUI();
+            toggleCart();
+        }
+
+        function showNotification(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-5 right-5 bg-gray-900 text-white text-sm px-4 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-2 animate-bounce';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-brand-500"></i> ${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
